@@ -63,3 +63,26 @@ class AdministrateurViewSet(viewsets.ModelViewSet):
 class ProfessionnelViewSet(viewsets.ModelViewSet):
     queryset = Professionnel.objects.all()
     serializer_class = ProfessionnelSerializer
+    
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from .forms import SignupForm
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            if user.user_type == 'prof':
+                Professionnel.objects.create(user=user, nom=request.POST.get('nom'))
+            elif user.user_type == 'ent':
+                Entreprise.objects.create(user=user, nom=request.POST.get('nom'))
+            elif user.user_type == 'admin':
+                Administrateur.objects.create(user=user, nom=request.POST.get('nom'))
+            login(request, user)
+            return redirect('home')
+    else:
+        form = SignupForm()
+    return render(request, 'signup.html', {'form': form})

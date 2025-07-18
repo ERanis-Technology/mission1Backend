@@ -1,5 +1,5 @@
 from django.db import models
-from profils.models import 
+"""from profils.models import 
 # Create your models here.
 class Mission(models.Model):
     STATUS_CHOICES = (
@@ -22,4 +22,4 @@ class Mission(models.Model):
     evaluation = models.FloatField(null=True, blank=True)  # Score d'évaluation
 
     def __str__(self):
-        return self.titre
+        return self.titre"""

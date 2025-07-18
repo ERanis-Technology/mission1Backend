@@ -1,6 +1,16 @@
 # profils/models.py
 from django.db import models
 
+
+class Entreprise(models.Model):
+    id_entreprise = models.AutoField(primary_key=True)
+    nom = models.CharField(max_length=100)
+    secteur = models.CharField(max_length=100)
+    besoin = models.TextField()
+
+    def __str__(self):
+        return self.nom
+
 class Type(models.Model):
     id_type = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=100)

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>En attente de validation</title>
+</head>
+<body>
+    <h2>En attente de validation</h2>
+    <p>Votre compte ({{ user.email }}) est en attente de validation par un administrateur. Vous serez notifié une fois validé.</p>
+    <a href="{% url 'login' %}">Se connecter</a>
+</body>
+</html>

@@ -49,10 +49,25 @@ class Administrateur(models.Model):
 class Professionnel(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     nom = models.CharField(max_length=100)
+    prenom = models.CharField(max_length=100)
+    telephone = models.CharField(max_length=20)
+    annee_experience = models.IntegerField(default=0)
+    portfolio_link = models.URLField(blank=True)
+    cv = models.FileField(upload_to='cvs/')
+    domaine_expertise = models.CharField(max_length=100)
+    disponibilites = models.CharField(max_length=200)
+    niveau_etudes = models.CharField(max_length=100)
+    reseau_sociaux = models.TextField(blank=True)
+    pays = models.CharField(max_length=100)
+    ville = models.CharField(max_length=100)
+    test_psychologique_passe = models.BooleanField(default=False)
+    valide_par_admin = models.BooleanField(default=False)
+    
     class Meta:
         db_table = 'professionnel'
+    
     def __str__(self):
-        return self.nom
+        return f"{self.nom} {self.prenom}"
 
 class Entreprise(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)

@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from .models import Administrateur, Professionnel, Competence, SouscriptionProf, Abonnement, Type
 
+
 class TypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Type
@@ -30,9 +31,17 @@ class AdministrateurSerializer(serializers.ModelSerializer):
         model = Administrateur
         fields = ['id_administrateur', 'nom', 'email']
 
+
+
+class AdministrateurSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Administrateur
+        fields = ['id', 'user', 'nom']
+
 class ProfessionnelSerializer(serializers.ModelSerializer):
-    competences = CompetenceSerializer(many=True, read_only=True)
-    souscriptions = SouscriptionProfSerializer(many=True, read_only=True, source='souscriptionprof_set')
     class Meta:
         model = Professionnel
-        fields = ['id_professionnel', 'nom', 'email', 'competences', 'souscriptions']
+        fields = ['id', 'user', 'nom', 'prenom', 'telephone', 'annee_experience',
+                  'portfolio_link', 'cv', 'domaine_expertise', 'disponibilites',
+                  'niveau_etudes', 'reseau_sociaux', 'pays', 'ville',
+                  'test_psychologique_passe', 'valide_par_admin']

@@ -62,13 +62,35 @@ class Administrateur(models.Model):
     def __str__(self):
         return self.nom
 
-class Entreprise(models.Model):
+class Entreprise(models.Model):#Je pense que il faut pas inclure mode de paiement ici ou encore faudra creer un nouveau model pour gerer cela et dans le modele la on pourra peutetre inclde l'email de l'entreprise pour le referencer
+    ABONNEMENT = [
+        ('basic', 'BASIC'),
+        ('premium', "PREMIUM")
+    ]
+
+    PAIEMENTS = [
+        ('virements_bancaires','VIREMENTS BANCAIRES'),
+        ('paiement_mobile','PAIEMENT MOBILE'),
+        ('portefeuilles_electroniques','PORTESFEUILLES ELECTRONIQUES')
+    ]
+
     id_entreprise = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    mdp = models.CharField(max_length=255)
+    tel = models.CharField(max_length=12)
     secteur = models.CharField(max_length=100)
     besoin = models.TextField()
-    mdp = models.CharField(max_length=255)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    nombre_employees = models.IntegerField(null=True,blank=True, default=0)
+    lien_site_web = models.URLField(max_length=300,blank=True,null=True,verbose_name="Lien vers site web")
+    adresse = models.CharField(max_length=255, verbose_name="Adresse complète (Pays, Ville)")
+    logo =  models.ImageField(upload_to='photos/entreprises/', blank=False, null=False)
+    personne_de_contact = models.CharField(max_length=255, verbose_name="nom et prenom")
+    type_abonnement = models.CharField(max_length=10,choices=ABONNEMENT,default='basic',verbose_name='type abonnement')
+    moyen_paiement = models.CharField(max_length=30,choices=PAIEMENTS,verbose_name='moyen paiement')
+    acceptation_condition = models.BooleanField(default=False)
+
 
     def save(self, *args, **kwargs):
         if self.mdp and not self.mdp.startswith('pbkdf2_sha256$'):

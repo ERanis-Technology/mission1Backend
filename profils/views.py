@@ -63,3 +63,6 @@ class AdministrateurViewSet(viewsets.ModelViewSet):
 class ProfessionnelViewSet(viewsets.ModelViewSet):
     queryset = Professionnel.objects.all()
     serializer_class = ProfessionnelSerializer
+
+
+############

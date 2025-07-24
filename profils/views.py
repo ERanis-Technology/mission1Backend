@@ -1,66 +1,91 @@
-# profils/views.py
-"""
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
+from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Administrateur, Professionnel
-from .serializers import AdministrateurSerializer, ProfessionnelSerializer
+from rest_framework.permissions import IsAuthenticated
+from authentification.permissions import IsAdministrateur, IsEntreprise, IsProfessionnel
+from .models import Administrateur, Entreprise, Professionnel, Categorie, SousDomaine
+from .serializers import AdministrateurSerializer, EntrepriseRegistrationSerializer, ProfessionnelSerializer, CategorieSerializer, SousDomaineSerializer
 
 class StandardPagination(PageNumberPagination):
-    page_size = 10  # Limite à 10 objets par page
+    page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
 
 class AdministrateurViewSet(viewsets.ModelViewSet):
     queryset = Administrateur.objects.all().order_by('id_administrateur')
     serializer_class = AdministrateurSerializer
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]  # Accès réservé aux admins
-    pagination_class = StandardPagination  # Active la pagination
-    filter_backends = [DjangoFilterBackend]  # Permet le filtrage
-    filterset_fields = ['nom', 'email']  # Champs filtrables
-
-    def perform_create(self, serializer):
-        # Validation supplémentaire lors de la création
-        serializer.save()
-
-    def perform_update(self, serializer):
-        # Validation supplémentaire lors de la mise à jour
-        serializer.save()
-
-class ProfessionnelViewSet(viewsets.ModelViewSet):
-    queryset = Professionnel.objects.all().order_by('id_professionnel')
-    serializer_class = ProfessionnelSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Accès réservé aux utilisateurs authentifiés
+    permission_classes = [IsAuthenticated, IsAdministrateur]  # Only admins can access
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['nom', 'email']
 
     def get_queryset(self):
-        # Optimisation : filtrer dynamiquement selon l'utilisateur connecté (exemple)
+        # Restrict admins to see only their own profile unless superuser
         user = self.request.user
-        if user.is_authenticated and not user.is_staff:
-            return self.queryset.filter(email=user.email)
+        if user.is_authenticated and not user.is_superuser:
+            return self.queryset.filter(user=user)
         return self.queryset
 
     def perform_create(self, serializer):
-        # Validation ou logique supplémentaire
-        serializer.save()
+        # Link the created admin to the authenticated user
+        serializer.save(user=self.request.user)
 
     def perform_update(self, serializer):
-        # Validation ou logique supplémentaire
         serializer.save()
-        """
 
-# profils/views.py
-from rest_framework import viewsets
-from .models import Administrateur, Professionnel
-from .serializers import AdministrateurSerializer, ProfessionnelSerializer
+class EntrepriseViewSet(viewsets.ModelViewSet):
+    queryset = Entreprise.objects.all().order_by('id_entreprise')
+    serializer_class = EntrepriseRegistrationSerializer
+    permission_classes = [IsAuthenticated, IsEntreprise | IsAdministrateur]  # Only enterprises can access
+    pagination_class = StandardPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['nom', 'email', 'secteur', 'type_abonnement']
 
-class AdministrateurViewSet(viewsets.ModelViewSet):
-    queryset = Administrateur.objects.all()
-    serializer_class = AdministrateurSerializer
+    def get_queryset(self):
+        # Restrict enterprises to see only their own profile unless admin
+        user = self.request.user
+        if user.is_authenticated and not user.is_superuser:
+            return self.queryset.filter(user=user)
+        return self.queryset
+
+    def perform_create(self, serializer):
+        # Link the created enterprise to the authenticated user
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save()
 
 class ProfessionnelViewSet(viewsets.ModelViewSet):
-    queryset = Professionnel.objects.all()
+    queryset = Professionnel.objects.all().order_by('id_professionnel')
     serializer_class = ProfessionnelSerializer
+    permission_classes = [IsAuthenticated, IsProfessionnel | IsAdministrateur]  # Professionals and admins can access
+    pagination_class = StandardPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['nom', 'email', 'annee_experience', 'niveau_d_etude', 'status']
 
+    def get_queryset(self):
+        # Restrict professionals to see only their own profile unless admin
+        user = self.request.user
+        if user.is_authenticated and not IsAdministrateur().has_permission(self.request, self):
+            return self.queryset.filter(user=user)
+        return self.queryset
+
+    def perform_create(self, serializer):
+        # Link the created professional to the authenticated user
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+
+
+class CategorieViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Categorie.objects.all()
+    serializer_class = CategorieSerializer
+    permission_classes = [AllowAny]  # Accessible à tous
+
+class SousDomaineViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = SousDomaine.objects.all()
+    serializer_class = SousDomaineSerializer
+    permission_classes = [AllowAny]  # Accessible à tous

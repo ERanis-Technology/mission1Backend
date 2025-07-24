@@ -74,6 +74,12 @@ class Entreprise(models.Model):#Je pense que il faut pas inclure mode de paiemen
         ('portefeuilles_electroniques','PORTESFEUILLES ELECTRONIQUES')
     ]
 
+    STATUS_CHOICES = [#Mais reste a savoir si il faut vraiment qu'une entreprise ou professionnel doit etre valider pendant son inscription parce que ca va etre trop fastidieux avec le temps vu le nombre d'utilisateurs
+        ('pending', 'En attente'),
+        ('approved', 'Approuvé'),
+        ('rejected', 'Rejeté'),
+    ]
+
     id_entreprise = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
@@ -90,6 +96,8 @@ class Entreprise(models.Model):#Je pense que il faut pas inclure mode de paiemen
     type_abonnement = models.CharField(max_length=10,choices=ABONNEMENT,default='basic',verbose_name='type abonnement')
     moyen_paiement = models.CharField(max_length=30,choices=PAIEMENTS,verbose_name='moyen paiement')
     acceptation_condition = models.BooleanField(default=False)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+
 
 
     def save(self, *args, **kwargs):
@@ -126,6 +134,12 @@ class Professionnel(models.Model):
         ('autre', "Autre"),
     ]
 
+    STATUS_CHOICES = [
+        ('pending', 'En attente'),
+        ('approved', 'Approuvé'),
+        ('rejected', 'Rejeté'),
+    ]
+
 
     id_professionnel = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=100)
@@ -137,12 +151,14 @@ class Professionnel(models.Model):
     disponibilite = models.CharField(max_length=13,choices=DISPONIBILITE_CHOICES,default='temps_partiel',verbose_name="Disponibilité")
     niveau_d_etude = models.CharField(max_length=20,choices=NIVEAUX_ETUDE,default='aucun',verbose_name='Niveau d\'étude')
     photo = models.ImageField(upload_to='photos/professionnels/', blank=False, null=False)
-    pays = models.ForeignKey(Pays, on_delete=models.SET_NULL, null=True, blank=True)
-    ville = models.ForeignKey(Ville, on_delete=models.SET_NULL, null=True, blank=True)
+    adresse = models.CharField(max_length=255, verbose_name="Adresse complète (Pays, Ville)")########
+    #pays = models.ForeignKey(Pays, on_delete=models.SET_NULL, null=True, blank=True)
+    #ville = models.ForeignKey(Ville, on_delete=models.SET_NULL, null=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     score_performance = models.FloatField(default=0.0)
     autres_competences = models.CharField(max_length=255,default="Aucune")
     cv = models.FileField(upload_to='cvs/',verbose_name='CV (format PDF)')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
     def save(self, *args, **kwargs):
         if self.mdp and not self.mdp.startswith('pbkdf2_sha256$'):

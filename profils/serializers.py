@@ -1,6 +1,6 @@
 # profils/serializers.py
 from rest_framework import serializers
-from .models import Administrateur, Professionnel, Competence, SouscriptionProf, Abonnement, Type
+from .models import Administrateur, Professionnel, Competence, SouscriptionProf, Abonnement, Type, Entreprise, Categorie, SousDomaine
 
 class TypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,3 +36,24 @@ class ProfessionnelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Professionnel
         fields = ['id_professionnel', 'nom', 'email', 'competences', 'souscriptions']
+
+
+class EntrepriseRegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Entreprise
+        fields = ['id_entreprise', 'nom', 'email', 'tel', 'secteur', 'besoin', 'nombre_employees',
+                  'lien_site_web', 'adresse', 'personne_de_contact', 'type_abonnement', 'status']
+        
+
+
+class SousDomaineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SousDomaine
+        fields = ['id', 'nom', 'categorie']
+
+class CategorieSerializer(serializers.ModelSerializer):
+    sous_domaines = SousDomaineSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Categorie
+        fields = ['id', 'nom', 'sous_domaines']

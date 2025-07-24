@@ -1,0 +1,242 @@
+# test.rest
+# Base URL for the API
+@baseUrl = http://localhost:8000
+@authToken = {{login.response.body.access}}  # Placeholder for JWT access token
+
+# 1. Register an Administrateur
+###
+POST {{baseUrl}}/api/register/administrateur/
+Content-Type: application/json
+
+{
+    "nom": "Admin Test",
+    "email": "htchamba124@gmail.com",
+    "mdp": "admin123"
+}
+
+
+
+# 2. Register an Entreprise
+###
+POST {{baseUrl}}/api/register/entreprise/
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="nom"
+
+Tech Corp
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="email"
+
+company_test@example.com
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="mdp"
+
+company123
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="tel"
+
+123456789
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="secteur"
+
+Technologie
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="besoin"
+
+Développement logiciel
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="adresse"
+
+Cameroun, Douala
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="personne_de_contact"
+
+Jean Dupont
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="type_abonnement"
+
+premium
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="moyen_paiement"
+
+paiement_mobile
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="acceptation_condition"
+
+true
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="logo"; filename="logo.png"
+Content-Type: image/png
+
+< /home/heil/Downloads/box.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+
+
+
+
+
+
+# 3. Register a Professionnel
+###
+POST {{baseUrl}}/api/register/professionnel/
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="nom"
+
+Pro Test
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="email"
+
+pro_test@example.com
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="mdp"
+
+pro123
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="tel"
+
+987654321
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="portfolio"
+
+https://portfolio.com
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="annee_experience"
+
+3-5
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="disponibilite"
+
+temps_plein
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="niveau_d_etude"
+
+licence
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="adresse"
+
+Cameroun, Douala
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="competences[]"
+
+1
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="competences[]"
+
+2
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="photo"; filename="photo.jpg"
+Content-Type: image/jpeg
+
+< /home/heil/Downloads/box.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="cv"; filename="cv.pdf"
+Content-Type: application/pdf
+
+< /home/heil/Downloads/MAXIT-1.pdf
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+
+
+
+
+
+
+
+# 4. Login (to get JWT token)
+###
+POST {{baseUrl}}/api/login/
+Content-Type: application/json
+#@name = login
+
+{
+    "email": "pro_test@example.com",
+    "password": "pro123"
+}
+
+
+
+
+
+
+
+# 5. Refresh Token
+###
+POST {{baseUrl}}/api/token/refresh/
+Content-Type: application/json
+
+{
+    "refresh": "{{login.response.body.refresh}}"
+}
+
+
+
+
+
+# 7. List Categories (for dropdowns)
+###
+GET {{baseUrl}}/api/categories/
+Content-Type: application/json
+
+
+
+
+
+# 8. List Sous-Domaines (for dropdowns)
+###
+GET {{baseUrl}}/api/sous-domaines/
+Content-Type: application/json
+
+
+
+
+
+
+# 9. List Administrateurs (Admin only)
+###
+GET {{baseUrl}}/api/administrateurs/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzMzkwMTMzLCJpYXQiOjE3NTMzODY1MzMsImp0aSI6ImI1MjU5YjI3Y2RmMTQ3N2JhOWE5ZDM1ZDc1NzgxZDFhIiwidXNlcl9pZCI6MX0.9mN5rZLGu9VssceGdAqRFin801q0xC6bhl2-r9CYlc4
+
+
+
+
+
+# 10. List Entreprises (Entreprise only)
+###
+GET {{baseUrl}}/api/entreprises/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzMzkwMTMzLCJpYXQiOjE3NTMzODY1MzMsImp0aSI6ImI1MjU5YjI3Y2RmMTQ3N2JhOWE5ZDM1ZDc1NzgxZDFhIiwidXNlcl9pZCI6MX0.9mN5rZLGu9VssceGdAqRFin801q0xC6bhl2-r9CYlc4
+
+
+
+
+# 11. List Professionnels (Professionnel or Admin only)
+###
+GET {{baseUrl}}/api/professionnels/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzMzkwMTMzLCJpYXQiOjE3NTMzODY1MzMsImp0aSI6ImI1MjU5YjI3Y2RmMTQ3N2JhOWE5ZDM1ZDc1NzgxZDFhIiwidXNlcl9pZCI6MX0.9mN5rZLGu9VssceGdAqRFin801q0xC6bhl2-r9CYlc4
+
+
+
+
+
+
+# 12. Filter Professionnels by status and experience
+###
+GET {{baseUrl}}/api/professionnels/?status=pending&annee_experience=3-5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzMzkwMTMzLCJpYXQiOjE3NTMzODY1MzMsImp0aSI6ImI1MjU5YjI3Y2RmMTQ3N2JhOWE5ZDM1ZDc1NzgxZDFhIiwidXNlcl9pZCI6MX0.9mN5rZLGu9VssceGdAqRFin801q0xC6bhl2-r9CYlc4
+
+
+
+
+# 13. Update Professionnel Profile
+###
+PATCH {{baseUrl}}/api/professionnels/1/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzMzkwMTMzLCJpYXQiOjE3NTMzODY1MzMsImp0aSI6ImI1MjU5YjI3Y2RmMTQ3N2JhOWE5ZDM1ZDc1NzgxZDFhIiwidXNlcl9pZCI6MX0.9mN5rZLGu9VssceGdAqRFin801q0xC6bhl2-r9CYlc4
+Content-Type: application/json
+
+{
+    "nom": "Pro Test Updated",
+    "tel": "123456789"
+}

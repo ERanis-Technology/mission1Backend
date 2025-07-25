@@ -27,23 +27,12 @@ class EntrepriseRegistrationView(APIView):
             serializer.save()
             return Response({"message": "Entreprise créée avec succès"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-"""
-class ProfessionnelRegistrationView(APIView):
-    def post(self, request):
-        serializer = ProfessionnelRegistrationSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Professionnel créé avec succès"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-"""
-
+    
 class ProfessionnelRegistrationView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        logger.info(f"Request data: {dict(request.data)}")
-        logger.info(f"Request POST: {dict(request.POST)}")
-        logger.info(f"Request FILES: {dict(request.FILES)}")
+    
         serializer = ProfessionnelRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

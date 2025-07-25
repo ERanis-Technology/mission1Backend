@@ -62,7 +62,7 @@ class ProfessionnelViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsProfessionnel | IsAdministrateur]  # Professionals and admins can access
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['nom', 'email', 'annee_experience', 'niveau_d_etude', 'status']
+    filterset_fields = ['nom', 'email', 'annee_experience', 'niveau_d_etude', 'status', 'en_mission']
 
     def get_queryset(self):
         # Restrict professionals to see only their own profile unless admin
@@ -89,3 +89,10 @@ class SousDomaineViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SousDomaine.objects.all()
     serializer_class = SousDomaineSerializer
     permission_classes = [AllowAny]  # Accessible à tous
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        categorie_id = self.request.query_params.get('categorie')
+        if categorie_id:
+            queryset = queryset.filter(categorie_id=categorie_id)
+        return queryset

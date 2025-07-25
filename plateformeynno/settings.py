@@ -159,3 +159,22 @@ EMAIL_HOST_USER = 'nana.heil@facsciences-uy1.cm'  # Remplacez par votre adresse 
 EMAIL_HOST_PASSWORD = 'bhmr phou guvx qjqm'  # Mot de passe d'application Google
 DEFAULT_FROM_EMAIL = 'nana.heil@facsciences-uy1.cm'  # L'adresse qui apparaîtra comme expéditeur
 #FRONTEND_URL = 'http://ureserve.smartcloudservices.cloud'
+
+
+
+
+LOGGING = {#Ensuite il faudra retirer ceci 
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+}

@@ -7,6 +7,13 @@ class TypeSerializer(serializers.ModelSerializer):
         model = Type
         fields = ['id_type', 'nom']
 
+
+class SousDomaineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SousDomaine
+        fields = ['id', 'nom', 'categorie']
+
+
 class AbonnementSerializer(serializers.ModelSerializer):
     type = TypeSerializer(read_only=True)
     class Meta:
@@ -21,9 +28,11 @@ class SouscriptionProfSerializer(serializers.ModelSerializer):
         fields = ['id_souscription_prof', 'abonnement', 'professionnel', 'date']
 
 class CompetenceSerializer(serializers.ModelSerializer):
+    sous_domaine = SousDomaineSerializer(read_only=True)
+
     class Meta:
         model = Competence
-        fields = ['id_competence', 'nom', 'description']
+        fields = ['id_competence', 'sous_domaine']
 
 class AdministrateurSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,7 +44,7 @@ class ProfessionnelSerializer(serializers.ModelSerializer):
     souscriptions = SouscriptionProfSerializer(many=True, read_only=True, source='souscriptionprof_set')
     class Meta:
         model = Professionnel
-        fields = ['id_professionnel', 'nom', 'email', 'competences', 'souscriptions']
+        fields = ['id_professionnel', 'nom', 'email', 'competences', 'souscriptions', 'en_mission']
 
 
 class EntrepriseRegistrationSerializer(serializers.ModelSerializer):
@@ -46,14 +55,8 @@ class EntrepriseRegistrationSerializer(serializers.ModelSerializer):
         
 
 
-class SousDomaineSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SousDomaine
-        fields = ['id', 'nom', 'categorie']
-
 class CategorieSerializer(serializers.ModelSerializer):
-    sous_domaines = SousDomaineSerializer(many=True, read_only=True)
 
     class Meta:
         model = Categorie
-        fields = ['id', 'nom', 'sous_domaines']
+        fields = ['id', 'nom']

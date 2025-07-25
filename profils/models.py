@@ -154,11 +154,12 @@ class Professionnel(models.Model):
     adresse = models.CharField(max_length=255, verbose_name="Adresse complète (Pays, Ville)")########
     #pays = models.ForeignKey(Pays, on_delete=models.SET_NULL, null=True, blank=True)
     #ville = models.ForeignKey(Ville, on_delete=models.SET_NULL, null=True, blank=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-    score_performance = models.FloatField(default=0.0)
-    autres_competences = models.CharField(max_length=255,default="Aucune")
-    cv = models.FileField(upload_to='cvs/',verbose_name='CV (format PDF)')
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)#J'ai oublier pourquoi il y'a user ci
+    score_performance = models.FloatField(default=0.0)#Le score du professionnel en fonction du numbre de misions reussies
+    autres_competences = models.CharField(max_length=255,default="Aucune")#Pour recevoir les autres competences qui ne figurent pas dans la liste deroulante proposer lors du l'inscription
+    cv = models.FileField(upload_to='cvs/',verbose_name='CV (format PDF)')#Document pdf pour le CV
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')#Pour savoir si il a ete autoriser a acceder a l'application ou pas
+    en_mission = models.BooleanField(default=False)#Pour savoir si le professionnel est deja en mission ou pas
 
     def save(self, *args, **kwargs):
         if self.mdp and not self.mdp.startswith('pbkdf2_sha256$'):

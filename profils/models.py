@@ -237,3 +237,8 @@ class ReseauSocial(models.Model):
     def __str__(self):
         return f"{self.professionnel.nom} - {self.plateforme}"
 
+
+
+class Newsletters_subscribers(models.Model):
+    id_newsletter = models.AutoField(primary_key=True)
+    email = models.EmailField(unique=True, blank=False)

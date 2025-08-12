@@ -4,9 +4,10 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from profils.models import Administrateur, Entreprise, Professionnel
+from profils.models import Administrateur, Entreprise, Professionnel, Newsletters_subscribers
 from .serializers import (AdministrateurRegistrationSerializer, EntrepriseRegistrationSerializer,
                           ProfessionnelRegistrationSerializer, LoginSerializer)
+from profils.serializers import Newsletters_subscribersSerializer
 import logging
 from rest_framework.permissions import AllowAny
 
@@ -24,18 +25,28 @@ class EntrepriseRegistrationView(APIView):
     def post(self, request):
         serializer = EntrepriseRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Entreprise créée avec succès"}, status=status.HTTP_201_CREATED)
+            entreprise = serializer.save()
+            try:
+                Newsletters_subscribers.objects.create(email=entreprise.email)
+            except Exception as e:
+                logger.warning(f"Email {entreprise.email} déjà dans la newsletter ou erreur: {str(e)}")
+            return Response({"message": "Entreprise créé avec succès"}, status=status.HTTP_201_CREATED)
+        logger.error(f"Serializer errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 class ProfessionnelRegistrationView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-    
         serializer = ProfessionnelRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            professionnel = serializer.save()
+            # Ajouter l'email à Newsletters_subscribers
+            try:
+                Newsletters_subscribers.objects.create(email=professionnel.email)
+            except Exception as e:
+                logger.warning(f"Email {professionnel.email} déjà dans la newsletter ou erreur: {str(e)}")
             return Response({"message": "Professionnel créé avec succès"}, status=status.HTTP_201_CREATED)
         logger.error(f"Serializer errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -98,4 +109,23 @@ class LoginView(APIView):
                 return Response({"error": "Identifiants incorrects"}, status=status.HTTP_401_UNAUTHORIZED)
             except User.DoesNotExist:
                 return Response({"error": "Utilisateur non trouvé"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+
+
+class NewsletterSubscriptionView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = Newsletters_subscribersSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                return Response({"message": "Inscription à la newsletter réussie"}, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                logger.error(f"Erreur lors de l'inscription à la newsletter: {str(e)}")
+                return Response({"error": "Cet email est déjà inscrit"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

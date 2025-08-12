@@ -240,3 +240,13 @@ Content-Type: application/json
     "nom": "Pro Test Updated",
     "tel": "123456789"
 }
+
+
+#Ici on a l'endpoint qui sera appeler sur la plateforme e-RANIS pour recuperer les adresses mails lorsque les utilisateurs vont s'enregistrer au newsletter
+###
+POST {{baseUrl}}/api/newsletter/subscribe/
+Content-Type: application/json
+
+{
+    "email": "exemple@domaine.com"
+}

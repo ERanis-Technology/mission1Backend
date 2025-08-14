@@ -1,6 +1,6 @@
 # profils/serializers.py
 from rest_framework import serializers
-from .models import Administrateur, Professionnel, Competence, SouscriptionProf, Abonnement, Type, Entreprise, Categorie, SousDomaine, Newsletters_subscribers
+from .models import Administrateur, Professionnel, Competence, SouscriptionProf, Abonnement, Type, Entreprise, Categorie, SousDomaine, Newsletters_subscribers, Contact
 
 class TypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -66,4 +66,10 @@ class CategorieSerializer(serializers.ModelSerializer):
 class Newsletters_subscribersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Newsletters_subscribers
-        fields = ['id_newsletter','email']
+        fields = ['id_newsletter','email','nom']
+
+
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = ['id_contact','email','nom','description']

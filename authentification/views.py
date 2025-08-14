@@ -4,10 +4,10 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from profils.models import Administrateur, Entreprise, Professionnel, Newsletters_subscribers
+from profils.models import Administrateur, Entreprise, Professionnel, Newsletters_subscribers, Contact
 from .serializers import (AdministrateurRegistrationSerializer, EntrepriseRegistrationSerializer,
                           ProfessionnelRegistrationSerializer, LoginSerializer)
-from profils.serializers import Newsletters_subscribersSerializer
+from profils.serializers import Newsletters_subscribersSerializer, ContactSerializer
 import logging
 from rest_framework.permissions import AllowAny
 
@@ -28,6 +28,7 @@ class EntrepriseRegistrationView(APIView):
             entreprise = serializer.save()
             try:
                 Newsletters_subscribers.objects.create(email=entreprise.email)
+                Newsletters_subscribers.objects.create(nom=entreprise.nom)
             except Exception as e:
                 logger.warning(f"Email {entreprise.email} déjà dans la newsletter ou erreur: {str(e)}")
             return Response({"message": "Entreprise créé avec succès"}, status=status.HTTP_201_CREATED)
@@ -45,6 +46,7 @@ class ProfessionnelRegistrationView(APIView):
             # Ajouter l'email à Newsletters_subscribers
             try:
                 Newsletters_subscribers.objects.create(email=professionnel.email)
+                Newsletters_subscribers.objects.create(nom=professionnel.nom)
             except Exception as e:
                 logger.warning(f"Email {professionnel.email} déjà dans la newsletter ou erreur: {str(e)}")
             return Response({"message": "Professionnel créé avec succès"}, status=status.HTTP_201_CREATED)
@@ -129,3 +131,14 @@ class NewsletterSubscriptionView(APIView):
                 logger.error(f"Erreur lors de l'inscription à la newsletter: {str(e)}")
                 return Response({"error": "Cet email est déjà inscrit"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ContactView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = ContactSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Reponse envoyé avec succès"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+          

@@ -248,5 +248,27 @@ POST {{baseUrl}}/api/newsletter/subscribe/
 Content-Type: application/json
 
 {
-    "email": "exemple@domaine.com"
+    "email": "exemple@domaine.com",
+    "nom": "Fingon Tralala"
 }
+
+###
+GET {{baseUrl}}/api/newsletter/
+Content-Type: application/json
+
+
+###
+POST {{baseUrl}}/api/contact/send/
+Content-Type: application/json
+
+{
+    "email": "exemple1@domaine.com",
+    "nom": "Fingon Tralala",
+    "description": "Bla bla bla bla bla bla blo blo blu blu"
+    
+}
+
+
+###
+GET {{baseUrl}}/api/contact/
+Content-Type: application/json

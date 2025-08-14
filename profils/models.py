@@ -242,3 +242,13 @@ class ReseauSocial(models.Model):
 class Newsletters_subscribers(models.Model):
     id_newsletter = models.AutoField(primary_key=True)
     email = models.EmailField(unique=True, blank=False)
+    nom = models.CharField(max_length=100)
+
+
+class Contact(models.Model):
+    id_contact = models.AutoField(primary_key=True)
+    email = models.EmailField(unique=True, blank=False)
+    nom = models.CharField(max_length=100)
+    description = models.CharField(max_length=500)
+
+

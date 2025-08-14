@@ -4,8 +4,8 @@ from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from authentification.permissions import IsAdministrateur, IsEntreprise, IsProfessionnel
-from .models import Administrateur, Entreprise, Professionnel, Categorie, SousDomaine
-from .serializers import AdministrateurSerializer, EntrepriseRegistrationSerializer, ProfessionnelSerializer, CategorieSerializer, SousDomaineSerializer
+from .models import Administrateur, Entreprise, Professionnel, Categorie, SousDomaine, Newsletters_subscribers, Contact
+from .serializers import AdministrateurSerializer, EntrepriseRegistrationSerializer, ProfessionnelSerializer, CategorieSerializer, SousDomaineSerializer, Newsletters_subscribersSerializer, ContactSerializer
 
 class StandardPagination(PageNumberPagination):
     page_size = 10
@@ -96,3 +96,15 @@ class SousDomaineViewSet(viewsets.ReadOnlyModelViewSet):
         if categorie_id:
             queryset = queryset.filter(categorie_id=categorie_id)
         return queryset
+    
+
+class NewsLetterViewSet(viewsets.ReadOnlyModelViewSet):#Cette api doit etre retirer avant la mise en production
+    queryset = Newsletters_subscribers.objects.all()
+    serializer_class = Newsletters_subscribersSerializer
+    permission_classes = [AllowAny]#Accessible a tous
+
+
+class ContactViewSet(viewsets.ReadOnlyModelViewSet):#Pareil que cet api
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+    permission_classes = [AllowAny]

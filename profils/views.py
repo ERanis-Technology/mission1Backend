@@ -97,7 +97,7 @@ class SousDomaineViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(categorie_id=categorie_id)
         return queryset
     
-
+"""
 class NewsLetterViewSet(viewsets.ReadOnlyModelViewSet):#Cette api doit etre retirer avant la mise en production
     queryset = Newsletters_subscribers.objects.all()
     serializer_class = Newsletters_subscribersSerializer
@@ -108,3 +108,4 @@ class ContactViewSet(viewsets.ReadOnlyModelViewSet):#Pareil que cet api
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
     permission_classes = [AllowAny]
+"""

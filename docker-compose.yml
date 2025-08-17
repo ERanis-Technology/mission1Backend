@@ -4,7 +4,7 @@ services:
   web:
     build: .
     container_name: django_app
-    command: gunicorn --bind 0.0.0.0:8000 plateformeynno.wsgi:application
+    command: ./entrypoint.sh
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
@@ -23,9 +23,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mission1db
+      POSTGRES_USER: mission1user
+      POSTGRES_PASSWORD: mission1password
     ports:
       - "5432:5432"
 
@@ -33,4 +33,3 @@ volumes:
   postgres_data:
   static_volume:
   media_volume:
-
